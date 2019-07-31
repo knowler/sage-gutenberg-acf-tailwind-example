@@ -1,10 +1,19 @@
-const mix = require('laravel-mix');
+const mix = require('laravel-mix')
+
+/**
+ * Plugins
+ */
+require('laravel-mix-purgecss')
+
+/**
+ * Helpers
+ */
 
 // Public path helper
-const publicPath = path => `${mix.config.publicPath}/${path}`;
+const publicPath = path => `${mix.config.publicPath}/${path}`
 
 // Source path helper
-const src = path => `resources/assets/${path}`;
+const src = path => `resources/assets/${path}`
 
 /*
  |--------------------------------------------------------------------------
@@ -17,41 +26,68 @@ const src = path => `resources/assets/${path}`;
  |
  */
 
-// Public Path
 mix
   .setPublicPath('./dist')
   .setResourceRoot(`/app/themes/sage/${mix.config.publicPath}/`)
   .webpackConfig({
-    output: { publicPath: mix.config.resourceRoot }
-  });
+    output: { publicPath: mix.config.resourceRoot },
+  })
+  .browserSync('sage-block-builder-example.test')
 
-// Browsersync
-mix.browserSync('example.test');
+/**
+ * Styles
+ */
 
-// Styles
-mix.sass(src`styles/app.scss`, 'styles');
+// Common PostCSS plugins
+const postCssPlugins = [
+  require('postcss-import')(),
+  require('tailwindcss')(),
+  require('postcss-preset-env')({ stage: 0 }),
+]
 
-// JavaScript
-mix.js(src`scripts/app.js`, 'scripts')
-   .js(src`scripts/customizer.js`, 'scripts')
-   .extract();
+// CSS configuration
+mix
+  .postCss(src`styles/app.css`, 'styles', postCssPlugins)
+  .postCss(src`styles/editor.css`, 'styles', [
+    ...postCssPlugins,
+    require('postcss-wrap')({
+      selector: '.acf-block-preview',
+      skip: /acf-block-preview/,
+    }),
+  ])
+  .purgeCss({
+    content: [
+      './resources/assets/**/*.js',
+      './resources/views/**/*.php',
+      './resources/fields/controls/**/*.php',
+    ],
+    defaultExtractor: content => content.match(/[A-Za-z0-9-_:/]+/g || []),
+    whitelistPatterns: [
+      /acf-block-preview/,
+    ],
+  })
+  .options({ processCssUrls: false })
 
-// Assets
-mix.copyDirectory(src`images`, publicPath`images`)
-   .copyDirectory(src`fonts`, publicPath`fonts`);
+/**
+ * Scripts
+ */
+mix
+  .js(src`scripts/app.js`, 'scripts')
+  .extract()
 
-// Autoload
-mix.autoload({
-  jquery: ['$', 'window.jQuery'],
-});
+/**
+ * Assets
+ */
+mix
+  .copyDirectory(src`images`, publicPath`images`)
+  .copyDirectory(src`fonts`, publicPath`fonts`)
 
-// Options
-mix.options({
-  processCssUrls: false,
-});
+/**
+ * Environment specifics
+ */
 
 // Source maps when not in production.
-mix.sourceMaps(false, 'source-map');
+mix.sourceMaps(false, 'source-map')
 
 // Hash and version files in production.
-mix.version();
+mix.version()

@@ -1,0 +1,13 @@
+/** We load in the theme’s styles. These are later wrapped with .acf-block-preview */
+@import "app.css";
+
+/** These are styles we’ve attached to the body */
+.acf-block-preview {
+  @apply bg-black text-white font-sans;
+
+  /** Force children of this block to inherit its body styles */
+  & * {
+    color: inherit;
+    font-family: inherit;
+  }
+}

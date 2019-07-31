@@ -77,7 +77,9 @@ return [
 
     'composers' => [
         App\Composers\Alert::class,
+        App\Composers\Heading::class,
         App\Composers\Title::class,
+        App\Composers\Section::class,
     ],
 
     /*
@@ -119,5 +121,6 @@ return [
 
     'components' => [
         'alert'  => 'components.alert',
+        'heading'  => 'components.heading',
     ],
 ];

@@ -2,6 +2,9 @@
 
 namespace App;
 
+use StoutLogic\AcfBuilder\FieldsBuilder;
+use KMDigital\AcfBlockBuilder\Block;
+use function Roots\app;
 use function Roots\asset;
 use function Roots\config;
 use function Roots\view;
@@ -11,7 +14,7 @@ use function Roots\view;
  */
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_script('sage/vendor', asset('scripts/vendor.js')->uri(), ['jquery'], null, true);
-    wp_enqueue_script('sage/app', asset('scripts/app.js')->uri(), ['sage/vendor', 'jquery'], null, true);
+    wp_enqueue_script('sage/app', asset('scripts/app.js')->uri(), ['sage/vendor'], null, true);
 
     wp_add_inline_script('sage/vendor', asset('scripts/manifest.js')->contents(), 'before');
 
@@ -27,6 +30,13 @@ add_action('wp_enqueue_scripts', function () {
         }
     }
 }, 100);
+
+/**
+ * Block editor assets
+ */
+add_action('enqueue_block_editor_assets', function () {
+    wp_enqueue_style('sage/editor', asset('styles/editor.css')->uri(), false, null);
+});
 
 /**
  * Theme setup
@@ -75,10 +85,9 @@ add_action('after_setup_theme', function () {
     add_theme_support('customize-selective-refresh-widgets');
 
     /**
-     * Use main stylesheet for visual editor
-     * @see resources/assets/styles/layouts/tinymce.scss
+     * Allow full width blocks
      */
-    add_editor_style(asset('styles/app.css')->uri());
+    add_theme_support('align-wide');
 }, 20);
 
 /**
@@ -101,4 +110,19 @@ add_action('widgets_init', function () {
         'name' => __('Footer', 'sage'),
         'id' => 'sidebar-footer'
     ] + $config);
+});
+
+/**
+ * Register ACF Field Groups and Blocks
+ */
+add_action('acf/init', function () {
+    if (function_exists('acf_add_local_field_group')) {
+        collect(glob(app()->resourcePath('fields/{blocks,pages}/*.php'), GLOB_BRACE))->map(function ($field) {
+            return require_once($field);
+        })->map(function ($field) {
+            if ($field instanceof FieldsBuilder || $field instanceof Block) {
+                acf_add_local_field_group($field->build());
+            }
+        });
+    }
 });

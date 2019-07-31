@@ -7,19 +7,15 @@
     @php(do_action('get_header'))
     @include('partials.header')
 
-    <div class="wrap container">
-      <div class="content">
-        <main class="main">
-          @yield('content')
-        </main>
+    <main>
+      @yield('content')
+    </main>
 
-        @hasSection('sidebar')
-          <aside class="sidebar">
-            @yield('sidebar')
-          </aside>
-        @endif
-      </div>
-    </div>
+    @hasSection('sidebar')
+      <aside>
+        @yield('sidebar')
+      </aside>
+    @endif
 
     @php(do_action('get_footer'))
     @include('partials.footer')

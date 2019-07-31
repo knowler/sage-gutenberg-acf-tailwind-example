@@ -1,6 +1,8 @@
-# Sage 10 with an ACF block builder
+# Sage 10 + Gutenberg + ACF (+ Tailwind)
 
-This is an example of how to set up Sage 10 with an ACF block
+(Work in Progress — Feedback and improvements to this workflow are welcome)
+
+This is an example workflow for Sage 10 with an ACF block
 builder. For the CSS framework, we’ll build our own with
 Tailwind.
 

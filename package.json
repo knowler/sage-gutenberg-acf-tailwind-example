@@ -35,17 +35,9 @@
     "postcss-preset-env": "^6.7.0",
     "postcss-wrap": "^0.0.4",
     "rimraf": "^2.6",
-    "sass": "^1.22",
-    "sass-loader": "7.*",
     "stylelint": "^10.1",
     "stylelint-config-standard": "^18.2",
     "tailwindcss": "^1.0.5",
-    "vue-template-compiler": "^2.6"
-  },
-  "dependencies": {
-    "bootstrap": "^4.3",
-    "jquery": "^3.4",
-    "js-dom-router": "^1.0",
-    "popper.js": "^1.15"
+    "vue-template-compiler": "^2.6.10"
   }
 }
